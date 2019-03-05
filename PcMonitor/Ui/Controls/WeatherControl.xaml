@@ -1,0 +1,176 @@
+﻿<UserControl
+    x:Class="PcMonitor.Ui.Controls.WeatherControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:PcMonitor.Ui.Converter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:PcMonitor.Ui.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="260"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
+    <UserControl.DataContext>
+        <local:WeatherControlViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converter:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+
+        <Style x:Key="WeatherListStyle" TargetType="{x:Type Label}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="Hack" />
+        </Style>
+
+        <Style x:Key="WeatherDataStyle" TargetType="{x:Type Label}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="Hack" />
+        </Style>
+
+    </UserControl.Resources>
+    <Grid>
+        <Label
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="Settings for weather missing!"
+            Visibility="{Binding ShowError, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Grid IsEnabled="{Binding ShowError, Converter={StaticResource NegateBooleanConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Left"
+                Content="{Binding Location}"
+                Style="{DynamicResource WeatherListStyle}" />
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Content="{Binding UpdateTime}" />
+
+            <Separator
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Margin="3" />
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                Content="Sun rise / set:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="2"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Content="{Binding SunRiseSet}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                Content="Temperature:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="3"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Content="{Binding Temperature}"
+                Style="{DynamicResource WeatherDataStyle}" />
+            <iconPacks:PackIconMaterial
+                Grid.Row="3"
+                Grid.Column="2"
+                Margin="3"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Kind="{Binding TempImage}" />
+
+            <Label
+                Grid.Row="4"
+                Grid.Column="0"
+                Content="Clouds:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="4"
+                Grid.Column="1"
+                Content="{Binding Clouds}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
+            <Label
+                Grid.Row="5"
+                Grid.Column="0"
+                Content="Humidity:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="5"
+                Grid.Column="1"
+                Content="{Binding Humidity}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
+            <Label
+                Grid.Row="6"
+                Grid.Column="0"
+                Content="Wind:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="6"
+                Grid.Column="1"
+                Content="{Binding Wind}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
+            <Label
+                Grid.Row="7"
+                Grid.Column="0"
+                Content="Pressure:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="7"
+                Grid.Column="1"
+                Content="{Binding Pressure}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
+            <Image
+                Grid.Row="4"
+                Grid.RowSpan="4"
+                Grid.Column="2"
+                Source="{Binding Image}"
+                Stretch="Fill"
+                ToolTip="{Binding ImageToolTip}" />
+
+            <CheckBox
+                Grid.Row="8"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Margin="3"
+                Content="Log weather"
+                FontFamily="Hack"
+                FontSize="16"
+                IsChecked="{Binding LogWeather}" />
+        </Grid>
+    </Grid>
+
+</UserControl>
