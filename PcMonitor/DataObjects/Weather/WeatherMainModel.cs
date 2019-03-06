@@ -68,12 +68,12 @@ namespace PcMonitor.DataObjects.Weather
         /// <summary>
         /// Gets or sets the rain values
         /// </summary>
-        public RainModel Rain { get; set; }
+        public RainSnowModel Rain { get; set; }
 
         /// <summary>
         /// Gets or sets the snow values
         /// </summary>
-        public SnowModel Snow { get; set; }
+        public RainSnowModel Snow { get; set; }
 
         /// <summary>
         /// Gets or sets the time stamp

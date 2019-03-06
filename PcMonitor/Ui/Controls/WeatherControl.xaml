@@ -7,7 +7,7 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:PcMonitor.Ui.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="260"
+    d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
     <UserControl.DataContext>
@@ -16,20 +16,6 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converter:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-
-        <Style x:Key="WeatherListStyle" TargetType="{x:Type Label}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontFamily" Value="Hack" />
-        </Style>
-
-        <Style x:Key="WeatherDataStyle" TargetType="{x:Type Label}">
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="FontFamily" Value="Hack" />
-        </Style>
-
     </UserControl.Resources>
     <Grid>
         <Label
@@ -45,6 +31,8 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -89,6 +77,19 @@
                 Grid.ColumnSpan="2"
                 Content="{Binding SunRiseSet}"
                 Style="{DynamicResource WeatherDataStyle}" />
+            <Button
+                Grid.Row="2"
+                Grid.Column="2"
+                Width="30"
+                Height="23"
+                Margin="3"
+                HorizontalAlignment="Right"
+                Command="{Binding ShowStatisticsCommand}">
+                <iconPacks:PackIconOcticons
+                    Height="10"
+                    VerticalAlignment="Center"
+                    Kind="Graph" />
+            </Button>
 
             <Label
                 Grid.Row="3"
@@ -153,19 +154,43 @@
                 Content="{Binding Pressure}"
                 Style="{DynamicResource WeatherDataStyle}" />
 
+            <Label
+                Grid.Row="8"
+                Grid.Column="0"
+                Content="Rain:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="8"
+                Grid.Column="1"
+                Content="{Binding Rain}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
+            <Label
+                Grid.Row="9"
+                Grid.Column="0"
+                Content="Snow:"
+                Style="{DynamicResource WeatherListStyle}" />
+            <Label
+                Grid.Row="9"
+                Grid.Column="1"
+                Content="{Binding Snow}"
+                Style="{DynamicResource WeatherDataStyle}" />
+
             <Image
                 Grid.Row="4"
-                Grid.RowSpan="4"
+                Grid.RowSpan="6"
                 Grid.Column="2"
                 Source="{Binding Image}"
-                Stretch="Fill"
+                Stretch="Uniform"
                 ToolTip="{Binding ImageToolTip}" />
 
             <CheckBox
-                Grid.Row="8"
+                Grid.Row="10"
                 Grid.Column="0"
                 Grid.ColumnSpan="3"
                 Margin="3"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
                 Content="Log weather"
                 FontFamily="Hack"
                 FontSize="16"

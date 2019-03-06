@@ -34,6 +34,15 @@ namespace PcMonitor.Ui
         }
 
         /// <summary>
+        /// Sets the size of the font
+        /// </summary>
+        /// <param name="big">true for big font, otherwise false</param>
+        private void SetFontSize(bool big)
+        {
+            Helper.ChangeStyle(big);
+        }
+
+        /// <summary>
         /// Sets the weather control
         /// </summary>
         /// <param name="weather">The current weather</param>
@@ -48,7 +57,7 @@ namespace PcMonitor.Ui
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is MainWindowViewModel viewModel)
-                viewModel.InitViewModel(DialogCoordinator.Instance, SetScreenSize, SetWeatherControl);
+                viewModel.InitViewModel(DialogCoordinator.Instance, SetScreenSize, SetWeatherControl, SetFontSize);
         }
 
         /// <summary>

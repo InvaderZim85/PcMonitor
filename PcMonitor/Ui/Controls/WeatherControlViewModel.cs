@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using MahApps.Metro.IconPacks;
+using PcMonitor.Data;
 using PcMonitor.DataObjects.Weather;
 using WpfBase;
 
@@ -16,9 +18,14 @@ namespace PcMonitor.Ui.Controls
         private WeatherMainModel _weather;
 
         /// <summary>
-        /// Contains the weather dictionary
+        /// Contains the previous temperature
         /// </summary>
-        private Dictionary<int, WeatherMainModel> _weatherDictionary = new Dictionary<int, WeatherMainModel>();
+        private double _oldTemp = 0;
+
+        /// <summary>
+        /// Contains the old calculation date
+        /// </summary>
+        private int _oldCalcDate = 0;
 
         /// <summary>
         /// Backing field for <see cref="UpdateTime"/>
@@ -161,9 +168,37 @@ namespace PcMonitor.Ui.Controls
         }
 
         /// <summary>
+        /// Backing field for <see cref="Rain"/>
+        /// </summary>
+        private string _rain;
+
+        /// <summary>
+        /// Gets or sets the rain value
+        /// </summary>
+        public string Rain
+        {
+            get => _rain;
+            set => SetField(ref _rain, value);
+        }
+
+        /// <summary>
+        /// Backing field for <see cref="Snow"/>
+        /// </summary>
+        private string _snow;
+
+        /// <summary>
+        /// Gets or sets the snow value
+        /// </summary>
+        public string Snow
+        {
+            get => _snow;
+            set => SetField(ref _snow, value);
+        }
+
+        /// <summary>
         /// Backing field for <see cref="LogWeather"/>
         /// </summary>
-        private bool _logWeather;
+        private bool _logWeather = true;
 
         /// <summary>
         /// Gets or sets the value which indicates if the weather should be logged
@@ -214,12 +249,9 @@ namespace PcMonitor.Ui.Controls
         {
             _weather = weather;
 
-            var nextId = _weatherDictionary.Count + 1;
-            _weatherDictionary.Add(nextId, weather);
-
             SaveWeatherData();
 
-            GetTempDirection(nextId);
+            GetTempDirection();
 
             if (weather == null)
             {
@@ -231,8 +263,8 @@ namespace PcMonitor.Ui.Controls
 
             Location = $"Weather for {_weather.Name}";
 
-            var sunrise = Helper.FromUnixUtc(_weather.Sys.Sunrise);
-            var sunset = Helper.FromUnixUtc(_weather.Sys.Sunset);
+            var sunrise = Helper.FromUnixUtc(_weather.Sys?.Sunrise ?? 0);
+            var sunset = Helper.FromUnixUtc(_weather.Sys?.Sunset ?? 0);
 
             SunRiseSet = $"{sunrise:HH:mm:ss} / {sunset:HH:mm:ss}";
 
@@ -245,6 +277,9 @@ namespace PcMonitor.Ui.Controls
             Wind = $"{_weather.Wind.Speed:N2}m/s ({_weather.Wind.Deg}°)";
 
             Pressure = $"{_weather.Main.Pressure}hPa";
+
+            Rain = _weather?.Rain == null ? "0mm" : $"{_weather.Rain.OneHour}mm";
+            Snow = _weather?.Snow == null ? "0mm" : $"{_weather.Snow.OneHour}mm";
 
             var lastCalcDate = Helper.FromUnixUtc(_weather.Dt);
             UpdateTime = $"Last update: {lastCalcDate:G}";
@@ -263,6 +298,12 @@ namespace PcMonitor.Ui.Controls
             }
         }
 
+        public ICommand ShowStatisticsCommand => new DelegateCommand(() =>
+        {
+            var dialog = new WeatherStatisticsWindow();
+            dialog.ShowDialog();
+        });
+
         /// <summary>
         /// Saves the weather data
         /// </summary>
@@ -271,37 +312,30 @@ namespace PcMonitor.Ui.Controls
             if (!LogWeather)
                 return;
 
-            var path = Path.Combine(Helper.GetBaseFolder(), $"WeatherData_{DateTime.Now:yyyyMMdd}.json");
-
-            Helper.WriteData(path, _weatherDictionary.Select(s => s.Value).ToList());
+            WeatherRepo.InsertWeatherData(_weather);
         }
 
         /// <summary>
         /// Compares the current and the last weather to calculate the direction (up, down, etc.)
         /// </summary>
-        /// <param name="lastId">The id of the last entry</param>
-        private void GetTempDirection(int lastId)
+        private void GetTempDirection()
         {
-            if (lastId == 1)
+            if (_oldTemp.Equals(0) || _oldCalcDate == _weather.Dt)
             {
-                TempImage = PackIconMaterialKind.ArrowRight;
+                _oldTemp = _weather.Main.Temp;
+                _oldCalcDate = _weather.Dt;
                 return;
             }
 
-            if (_weatherDictionary.TryGetValue(lastId, out var current) &&
-                _weatherDictionary.TryGetValue(lastId - 1, out var lastWeather))
-            {
-                var curTemp = (int) Math.Round(current.Main.Temp, 0);
-                var lastTemp = (int) Math.Round(lastWeather.Main.Temp, 0);
+            if (_weather.Main.Temp > _oldTemp)
+                TempImage = PackIconMaterialKind.ArrowTopRight;
+            else if (_weather.Main.Temp.Equals(_oldTemp))
+                TempImage = PackIconMaterialKind.ArrowRight;
+            else
+                TempImage = PackIconMaterialKind.ArrowBottomRight;
 
-                if (curTemp > lastTemp)
-                    TempImage = PackIconMaterialKind.ArrowTopRight;
-                else if (curTemp == lastTemp)
-                    TempImage = PackIconMaterialKind.ArrowRight;
-                else
-                    TempImage = PackIconMaterialKind.ArrowBottomRight;
-            }
-
+            _oldTemp = _weather.Main.Temp;
+            _oldCalcDate = _weather.Dt;
         }
     }
 }

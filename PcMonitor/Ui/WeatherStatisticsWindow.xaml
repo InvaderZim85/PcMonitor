@@ -1,0 +1,156 @@
+﻿<mah:MetroWindow
+    x:Class="PcMonitor.Ui.WeatherStatisticsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PcMonitor.Ui"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+    Title="Weather statistics"
+    Width="800"
+    Height="450"
+    mah:DialogParticipation.Register="{Binding}"
+    Loaded="WeatherStatisticsWindow_OnLoaded"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <mah:MetroWindow.DataContext>
+        <local:WeatherStatisticsWindowViewModel />
+    </mah:MetroWindow.DataContext>
+    <mah:MetroWindow.Resources>
+        <Style x:Key="CleanSeparator" TargetType="wpf:Separator">
+            <Setter Property="IsEnabled" Value="False" />
+            <Setter Property="Step" Value="10" />
+        </Style>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </mah:MetroWindow.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Content="Location:"
+            Style="{DynamicResource NormalListStyle}" />
+        <ComboBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="3"
+            ItemsSource="{Binding LocationList}"
+            SelectedItem="{Binding SelectedLocation}" />
+
+        <Button
+            Grid.Row="0"
+            Grid.Column="2"
+            Width="50"
+            Margin="3"
+            Command="{Binding ShowDataCommand}"
+            Content="Load" />
+
+        <Separator
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="3" />
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            IsEnabled="{Binding HasValues}"
+            Orientation="Horizontal">
+            <CheckBox
+                Margin="3"
+                Content="Temperature"
+                IsChecked="{Binding ShowTemp}" />
+            <CheckBox
+                Margin="3"
+                Content="Pressure"
+                IsChecked="{Binding ShowPressure}" />
+            <CheckBox
+                Margin="3"
+                Content="Humidity"
+                IsChecked="{Binding ShowHumidity}" />
+        </StackPanel>
+
+        <wpf:CartesianChart
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="3">
+            <wpf:CartesianChart.AxisY>
+                <wpf:Axis
+                    Title="Temperature (°C)"
+                    Foreground="DarkBlue"
+                    LabelFormatter="{Binding YFormatter}" />
+                <wpf:Axis
+                    Title="Pressure (hPa)"
+                    Foreground="DarkRed"
+                    Position="RightTop">
+                    <wpf:Axis.Separator>
+                        <wpf:Separator Style="{StaticResource CleanSeparator}" />
+                    </wpf:Axis.Separator>
+                </wpf:Axis>
+                <wpf:Axis
+                    Title="Humidity (%)"
+                    Foreground="DarkGreen"
+                    Position="RightTop">
+                    <wpf:Axis.Separator>
+                        <wpf:Separator Style="{StaticResource CleanSeparator}" />
+                    </wpf:Axis.Separator>
+                </wpf:Axis>
+            </wpf:CartesianChart.AxisY>
+            <wpf:CartesianChart.AxisX>
+                <wpf:Axis Title="Date" Labels="{Binding Labels}" />
+            </wpf:CartesianChart.AxisX>
+            <wpf:CartesianChart.Series>
+                <wpf:LineSeries
+                    Title="Temperature (°C)"
+                    Foreground="DarkBlue"
+                    LineSmoothness="0"
+                    ScalesYAt="0"
+                    Values="{Binding TempValues}"
+                    Visibility="{Binding ShowTemp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <wpf:LineSeries
+                    Title="Pressure (hPa)"
+                    Foreground="DarkRed"
+                    LineSmoothness="0"
+                    ScalesYAt="1"
+                    Values="{Binding PressureValues}"
+                    Visibility="{Binding ShowPressure, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <wpf:LineSeries
+                    Title="Humidity (%)"
+                    Foreground="DarkGreen"
+                    LineSmoothness="0"
+                    ScalesYAt="2"
+                    Values="{Binding HumidityValues}"
+                    Visibility="{Binding ShowHumidity, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </wpf:CartesianChart.Series>
+        </wpf:CartesianChart>
+
+        <Separator
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="3" />
+
+        <Button
+            Grid.Row="5"
+            Grid.Column="2"
+            Margin="3"
+            Content="Close" />
+    </Grid>
+</mah:MetroWindow>

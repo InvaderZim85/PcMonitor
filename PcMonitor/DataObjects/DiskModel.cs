@@ -27,5 +27,10 @@
         /// </summary>
         public string View =>
             $"{Used.GetDisplayValue(Helper.UnitType.Byte)} / {Total.GetDisplayValue(Helper.UnitType.Byte)} ({Helper.CalculatePercentage(Total, Used):N0}%)";
+
+        /// <summary>
+        /// Gets the current usage percentage
+        /// </summary>
+        public double UsagePercentage => Helper.CalculatePercentage(Total, Used);
     }
 }

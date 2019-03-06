@@ -28,6 +28,11 @@ namespace PcMonitor.Ui
         private Action<bool> _setWindow;
 
         /// <summary>
+        /// Contains the action wich sets the font size
+        /// </summary>
+        private Action<bool> _setFontSize;
+
+        /// <summary>
         /// Contains the action which sets the weather
         /// </summary>
         private Action<WeatherMainModel> _setWeather;
@@ -81,9 +86,27 @@ namespace PcMonitor.Ui
         }
 
         /// <summary>
+        /// Backing field for <see cref="BigStyle"/>
+        /// </summary>
+        private bool _bigStyle;
+
+        /// <summary>
+        /// Gets or sets the value which indicates if the window should be shown big or small
+        /// </summary>
+        public bool BigStyle
+        {
+            get => _bigStyle;
+            set
+            {
+                SetField(ref _bigStyle, value);
+                _setFontSize(value);
+            }
+        }
+
+        /// <summary>
         /// Backing field for <see cref="Clock"/>
         /// </summary>
-        private string _clock = "Clock";
+        private string _clock = "01.01.2019 12:30:30";
 
         /// <summary>
         /// Gets or sets the clock
@@ -165,6 +188,20 @@ namespace PcMonitor.Ui
         }
 
         /// <summary>
+        /// Backing field for <see cref="RamUsagePercent"/>
+        /// </summary>
+        private double _ramUsagePercent;
+
+        /// <summary>
+        /// Gets or sets the percentage of the ram usage
+        /// </summary>
+        public double RamUsagePercent
+        {
+            get => _ramUsagePercent;
+            set => SetField(ref _ramUsagePercent, value);
+        }
+
+        /// <summary>
         /// Backing field for <see cref="Volume"/>
         /// </summary>
         private string _volume;
@@ -226,11 +263,13 @@ namespace PcMonitor.Ui
         /// <param name="dialogCoordinator">The mahapps dialog coordinator</param>
         /// <param name="setWindow">The action to set the window state</param>
         /// <param name="setWeather">The action to set the weather</param>
-        public void InitViewModel(IDialogCoordinator dialogCoordinator, Action<bool> setWindow, Action<WeatherMainModel> setWeather)
+        /// <param name="setFontSize">The action to set the font size</param>
+        public void InitViewModel(IDialogCoordinator dialogCoordinator, Action<bool> setWindow, Action<WeatherMainModel> setWeather, Action<bool> setFontSize)
         {
             _dialogCoordinator = dialogCoordinator;
             _setWindow = setWindow;
             _setWeather = setWeather;
+            _setFontSize = setFontSize;
 
             _settings = Helper.LoadSettings();
 
@@ -341,6 +380,8 @@ namespace PcMonitor.Ui
 
             RamUsage =
                 $"{used.GetDisplayValue(Helper.UnitType.KiloByte, true)} / {total.GetDisplayValue(Helper.UnitType.KiloByte, true)} ({Helper.CalculatePercentage(total, used):N0}%)";
+
+            RamUsagePercent = Helper.CalculatePercentage(total, used);
         }
 
         /// <summary>

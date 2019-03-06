@@ -16,6 +16,18 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <Style x:Key="NormalListStyle" TargetType="{x:Type Label}">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="HeaderStyle" TargetType="{x:Type Label}">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontFamily" Value="Hack" />
+                <Setter Property="FontSize" Value="40" />
+            </Style>
+
             <Style x:Key="ListStyle" TargetType="{x:Type Label}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalAlignment" Value="Right" />
@@ -26,6 +38,19 @@
             <Style x:Key="DataStyle" TargetType="{x:Type Label}">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontFamily" Value="Hack" />
+            </Style>
+
+            <Style x:Key="WeatherListStyle" TargetType="{x:Type Label}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontFamily" Value="Hack" />
+            </Style>
+
+            <Style x:Key="WeatherDataStyle" TargetType="{x:Type Label}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontFamily" Value="Hack" />
             </Style>
         </ResourceDictionary>
