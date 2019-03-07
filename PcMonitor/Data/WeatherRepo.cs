@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Documents;
 using Dapper;
 using PcMonitor.DataObjects;
 using PcMonitor.DataObjects.Weather;

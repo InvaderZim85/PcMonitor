@@ -18,6 +18,11 @@ namespace PcMonitor.Ui.Controls
         private WeatherMainModel _weather;
 
         /// <summary>
+        /// Contains the list with the weather data
+        /// </summary>
+        private List<WeatherMainModel> _weatherList;
+
+        /// <summary>
         /// Contains the previous temperature
         /// </summary>
         private double _oldTemp = 0;
@@ -242,12 +247,29 @@ namespace PcMonitor.Ui.Controls
         }
 
         /// <summary>
+        /// Backing field for <see cref="ShowStatisticsEnabled"/>
+        /// </summary>
+        private bool _showStatisticsEnabled;
+
+        /// <summary>
+        /// Gets or sets the value which indicates if the settings button should be enabled
+        /// </summary>
+        public bool ShowStatisticsEnabled
+        {
+            get => _showStatisticsEnabled;
+            set => SetField(ref _showStatisticsEnabled, value);
+        }
+
+        /// <summary>
         /// Sets the weather
         /// </summary>
         /// <param name="weather">The current weather</param>
         public void SetWeather(WeatherMainModel weather)
         {
+            ShowStatisticsEnabled = Helper.HasDatabaseConnection;
+
             _weather = weather;
+            AddWeatherToList();
 
             SaveWeatherData();
 
@@ -312,7 +334,10 @@ namespace PcMonitor.Ui.Controls
             if (!LogWeather)
                 return;
 
-            WeatherRepo.InsertWeatherData(_weather);
+            if (Helper.HasDatabaseConnection)
+                WeatherRepo.InsertWeatherData(_weather);
+            else
+                AddWeatherToList();
         }
 
         /// <summary>
@@ -336,6 +361,26 @@ namespace PcMonitor.Ui.Controls
 
             _oldTemp = _weather.Main.Temp;
             _oldCalcDate = _weather.Dt;
+        }
+
+        private void AddWeatherToList()
+        {
+            if (Helper.HasDatabaseConnection)
+                return;
+
+            var path = Path.Combine(Helper.GetBaseFolder(), "WeatherLog.json");
+
+            if (_weatherList == null)
+            {
+                _weatherList = Helper.LoadData<List<WeatherMainModel>>(path) ?? new List<WeatherMainModel>();
+            }
+
+            if (_weatherList.Any(a => a.Dt == _weather.Dt))
+                return;
+
+            _weatherList.Add(_weather);
+
+            Helper.WriteData(path, _weatherList);
         }
     }
 }

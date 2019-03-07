@@ -18,11 +18,6 @@ namespace PcMonitor.Ui
         private IDialogCoordinator _dialogCoordinator;
 
         /// <summary>
-        /// Contains the settings
-        /// </summary>
-        private SettingsModel _settings;
-
-        /// <summary>
         /// Contains the action which sets the window state
         /// </summary>
         private Action<bool> _setWindow;
@@ -258,6 +253,20 @@ namespace PcMonitor.Ui
         }
 
         /// <summary>
+        /// Backing field for <see cref="ShowWeather"/>
+        /// </summary>
+        private bool _showWeather;
+
+        /// <summary>
+        /// Gets the value which indicates if the weather should be shown
+        /// </summary>
+        public bool ShowWeather
+        {
+            get => _showWeather;
+            set => SetField(ref _showWeather, value);
+        }
+
+        /// <summary>
         /// Init the view model
         /// </summary>
         /// <param name="dialogCoordinator">The mahapps dialog coordinator</param>
@@ -271,7 +280,7 @@ namespace PcMonitor.Ui
             _setWeather = setWeather;
             _setFontSize = setFontSize;
 
-            _settings = Helper.LoadSettings();
+            ShowWeather = Helper.SettingsLoaded;
 
             StartTimer();
         }
@@ -389,7 +398,10 @@ namespace PcMonitor.Ui
         /// </summary>
         private void SetWeather()
         {
-            var weather = RestManager.GetWeather(_settings.ApiKey, _settings.Location);
+            if (!Helper.SettingsLoaded)
+                return;
+
+            var weather = RestManager.GetWeather();
             _setWeather(weather);
         }
 

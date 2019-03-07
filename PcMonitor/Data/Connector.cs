@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using MySql.Data.MySqlClient;
 
 namespace PcMonitor.Data
@@ -31,14 +32,31 @@ namespace PcMonitor.Data
         {
             _connection = new MySqlConnection(new MySqlConnectionStringBuilder
             {
-                Server = "MySqlServer",
-                Port = 3306,
-                UserID = "User",
-                Password = "Password",
-                Database = "Database"
+                Server = Helper.Settings.DbServer,
+                Port = (uint) Helper.Settings.DbPort,
+                UserID = Helper.Settings.DbUser,
+                Password = Helper.Settings.DbPassword,
+                Database = Helper.Settings.DbDatabase,
+                ConnectionTimeout = 5
             }.ConnectionString);
 
-            _connection.Open();
+            try
+            {
+                _connection.Open();
+                Helper.HasDatabaseConnection = true;
+            }
+            catch (Exception)
+            {
+                Helper.HasDatabaseConnection = false;
+            }
+        }
+
+        /// <summary>
+        /// Checks the connection
+        /// </summary>
+        public static void CheckConnection()
+        {
+            CreateConnection();
         }
     }
 }

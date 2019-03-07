@@ -9,18 +9,18 @@ namespace PcMonitor
         /// <summary>
         /// Loads the weather from openweathermap.org
         /// </summary>
-        /// <param name="apiKey">The api key</param>
-        /// <param name="location">The desired location (CityName,Country)</param>
         /// <returns>The current weather</returns>
-        public static WeatherMainModel GetWeather(string apiKey, string location)
+        public static WeatherMainModel GetWeather()
         {
+            if (!Helper.SettingsLoaded)
+                return new WeatherMainModel();
             try
             {
                 var client = new RestClient("http://api.openweathermap.org");
 
                 var request = new RestRequest("data/2.5/weather");
-                request.AddQueryParameter("appid", apiKey); // API Key
-                request.AddQueryParameter("q", location);
+                request.AddQueryParameter("appid", Helper.Settings.ApiKey); // API Key
+                request.AddQueryParameter("q", Helper.Settings.Location);
                 request.AddQueryParameter("units", "metric");
 
                 var response = client.Execute<WeatherMainModel>(request);

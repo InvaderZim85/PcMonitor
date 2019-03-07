@@ -178,6 +178,34 @@ namespace PcMonitor.Ui
         }
 
         /// <summary>
+        /// Backing field for <see cref="FromDate"/>
+        /// </summary>
+        private DateTime _fromDate;
+
+        /// <summary>
+        /// Gets or sets the from date
+        /// </summary>
+        public DateTime FromDate
+        {
+            get => _fromDate;
+            set => SetField(ref _fromDate, value);
+        }
+
+        /// <summary>
+        /// Backing field for <see cref="TillDate"/>
+        /// </summary>
+        private DateTime _tillDate;
+
+        /// <summary>
+        /// Gets or sets the till date
+        /// </summary>
+        public DateTime TillDate
+        {
+            get => _tillDate;
+            set => SetField(ref _tillDate, value);
+        }
+
+        /// <summary>
         /// Init the view model
         /// </summary>
         /// <param name="dialogCoordinator">The dialog coordinator</param>
@@ -192,6 +220,11 @@ namespace PcMonitor.Ui
         public ICommand ShowDataCommand => new DelegateCommand(ShowValues);
 
         /// <summary>
+        /// The command to filter the values
+        /// </summary>
+        public ICommand ExecuteCommand => new DelegateCommand(ShowValues);
+
+        /// <summary>
         /// Loads the statistic data
         /// </summary>
         public async void LoadData()
@@ -201,6 +234,9 @@ namespace PcMonitor.Ui
                 _statistics = WeatherRepo.LoadWeatherStatistics();
 
                 LocationList = new ObservableCollection<string>(_statistics.Select(s => s.Location).GroupBy(g => g).Select(s => s.Key));
+                FromDate = _statistics.Min(m => m.CalculationDate);
+                TillDate = _statistics.Max(m => m.CalculationDate);
+
                 if (LocationList.Count == 1)
                 {
                     SelectedLocation = LocationList.FirstOrDefault();
@@ -225,7 +261,9 @@ namespace PcMonitor.Ui
 
             try
             {
-                var values = _statistics.Where(w => w.Location.Equals(SelectedLocation)).ToList();
+                var values = _statistics.Where(w => w.Location.Equals(SelectedLocation) &&
+                                                    w.CalculationDate >= FromDate &&
+                                                    w.CalculationDate <= TillDate).ToList();
 
                 HasValues = values.Any();
 

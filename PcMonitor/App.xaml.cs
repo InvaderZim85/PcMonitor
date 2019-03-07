@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+using PcMonitor.Data;
 
 namespace PcMonitor
 {
@@ -13,5 +9,24 @@ namespace PcMonitor
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// Occurs at the startup of the application
+        /// </summary>
+        private void App_OnStartup(object sender, StartupEventArgs e)
+        {
+            try
+            {
+                Helper.LoadSettings();
+
+                Connector.CheckConnection();
+
+                Helper.SettingsLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                Helper.SettingsLoaded = false;
+            }
+            
+        }
     }
 }

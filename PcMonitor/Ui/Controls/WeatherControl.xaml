@@ -84,7 +84,8 @@
                 Height="23"
                 Margin="3"
                 HorizontalAlignment="Right"
-                Command="{Binding ShowStatisticsCommand}">
+                Command="{Binding ShowStatisticsCommand}"
+                IsEnabled="{Binding ShowStatisticsEnabled}">
                 <iconPacks:PackIconOcticons
                     Height="10"
                     VerticalAlignment="Center"

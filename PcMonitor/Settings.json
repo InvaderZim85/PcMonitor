@@ -2,5 +2,10 @@
     // Your api key goes here
     "ApiKey": "",
     // Enter here the desired location in the following format: City,CountryCode. For example: Berlin,de
-    "Location": ""
+    "Location": "",
+    "DbServer": "",
+    "DbPort": 3306,
+    "DbUser": "",
+    "DbPassword": "",
+    "DbDatabase": ""
 }

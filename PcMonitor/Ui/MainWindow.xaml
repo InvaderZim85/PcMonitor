@@ -174,7 +174,8 @@
             x:Name="WeatherView"
             Grid.Row="13"
             Grid.Column="0"
-            Grid.ColumnSpan="2" />
+            Grid.ColumnSpan="2"
+            IsEnabled="{Binding ShowWeather, Mode=OneWay}" />
 
 
 

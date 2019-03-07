@@ -4,13 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using Newtonsoft.Json;
 using PcMonitor.DataObjects;
-using PcMonitor.DataObjects.Weather;
-using RestSharp;
 
 namespace PcMonitor
 {
@@ -24,6 +19,21 @@ namespace PcMonitor
             Byte,
             KiloByte,
         }
+
+        /// <summary>
+        /// Gets the settings
+        /// </summary>
+        public static SettingsModel Settings { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the value which indicates if the settings were loaded
+        /// </summary>
+        public static bool SettingsLoaded { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value which indicates if the program has a valid sql connection
+        /// </summary>
+        public static bool HasDatabaseConnection { get; set; }
 
         /// <summary>
         /// Loads the current cpu usage via WMI
@@ -205,22 +215,37 @@ namespace PcMonitor
             return File.Exists(file);
         }
 
+        public static T LoadData<T>(string file)
+        {
+            if (!File.Exists(file))
+                return default(T);
+
+            var content = File.ReadAllText(file);
+
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
         /// <summary>
         /// Loads the settings
         /// </summary>
         /// <returns>The settings</returns>
-        public static SettingsModel LoadSettings()
+        public static void LoadSettings()
         {
             var baseDir = GetBaseFolder();
 
             if (string.IsNullOrEmpty(baseDir))
-                return null;
+                return;
 
             var file = Path.Combine(baseDir, "Settings.json");
 
-            var content = File.ReadAllText(file);
-
-            return JsonConvert.DeserializeObject<SettingsModel>(content);
+            Settings = LoadData<SettingsModel>(file);
         }
 
         /// <summary>
